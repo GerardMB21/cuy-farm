@@ -1,0 +1,55 @@
+---
+import { Button } from "./ui/button";
+import { FieldGroup, FieldSet, FieldLegend, FieldDescription, Field, FieldLabel } from "./ui/field";
+import { Input } from "./ui/input";
+
+
+---
+
+<dialog
+    id="yard-dialog"
+    class="absolute top-1/2 left-1/2 -translate-1/2 p-4 rounded-2xl border w-80 md:w-96 min-h-80 md:min-h-auto"
+>
+    <Button
+        type="button"
+        variant='ghost'
+        size='icon'
+        commandfor="yard-dialog"
+        command="close"
+        className='absolute top-2 right-2'
+    >X</Button>
+    <form class="size-full flex flex-col gap-2">
+        <FieldGroup>
+            <FieldSet>
+                <FieldLegend>Nuevo Corral</FieldLegend>
+                <FieldDescription>Registra un corral nuevo recién adquirido o no registrado antes en el sistema con los valores actuales</FieldDescription>
+                <Field>
+                    <FieldLabel htmlFor="yard-name">
+                        Nombre de corral
+                    </FieldLabel>
+                    <Input
+                        id="yard-name"
+                        placeholder="Corral 1"
+                        required
+                    />
+                </Field>
+                <div class="grid grid-cols-3 gap-4">
+                    <Field>
+                        <FieldLabel htmlFor="checkout-exp-month-ts6">
+                        Machos
+                        </FieldLabel>
+                    </Field>
+                    <Field>
+                        <FieldLabel htmlFor="checkout-7j9-exp-year-f59">
+                        Hembras
+                        </FieldLabel>
+                    </Field>
+                    <Field>
+                        <FieldLabel htmlFor="checkout-7j9-cvv">Crías</FieldLabel>
+                        <Input id="checkout-7j9-cvv" placeholder="123" required />
+                    </Field>
+                </div>
+            </FieldSet>
+        </FieldGroup>
+    </form>
+</dialog>
