@@ -1,8 +1,34 @@
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
 import { Button } from './ui/button';
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from './ui/field';
 import { Input } from './ui/input';
+import type { Yard } from '@/types/yard';
+import { InputGroup } from './ui/input-group';
+
+const validationSchema = z.object({
+  name: z.string({ message: 'El nombre es requerdio' }),
+  initialMale: z.number().optional(),
+  initialFemale: z.number().optional(),
+  initialBabies: z.number().optional(),
+});
 
 const YardForm = () => {
+  const {
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+    control,
+  } = useForm<Yard>({
+    resolver: zodResolver(validationSchema),
+  });
+
+  function onSubmit(values: Yard) {
+    console.log('values: ', values);
+  }
+
   return (
     <dialog
       id="yard-dialog"
@@ -18,7 +44,7 @@ const YardForm = () => {
       >
         X
       </Button>
-      <form className="flex size-full flex-col gap-2">
+      <form className="flex size-full flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <FieldSet>
             <FieldLegend>Nuevo Corral</FieldLegend>
@@ -27,8 +53,29 @@ const YardForm = () => {
               valores actuales
             </FieldDescription>
             <Field>
-              <FieldLabel htmlFor="yard-name">Nombre de corral</FieldLabel>
-              <Input id="yard-name" placeholder="Corral 1" required />
+              <FieldLabel htmlFor="yard-name" className={errors.name ? 'text-destructive' : ''}>
+                Nombre de corral
+              </FieldLabel>
+              <InputGroup className={errors.name ? 'border-destructive' : ''}>
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="yard-name"
+                      placeholder="Corral 1"
+                      required
+                      {...field}
+                      value={field.value}
+                    />
+                  )}
+                />
+              </InputGroup>
+              {errors.name && (
+                <FieldDescription className="text-destructive">
+                  {errors.name.message}
+                </FieldDescription>
+              )}
             </Field>
             <div className="grid grid-cols-3 gap-4">
               <Field>
