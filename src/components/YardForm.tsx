@@ -9,9 +9,9 @@ import { InputGroup } from './ui/input-group';
 
 const validationSchema = z.object({
   name: z.string({ message: 'El nombre es requerdio' }),
-  initialMale: z.number().optional(),
-  initialFemale: z.number().optional(),
-  initialBabies: z.number().optional(),
+  initialMale: z.number().optional().nullable(),
+  initialFemale: z.number().optional().nullable(),
+  initialBabies: z.number().optional().nullable(),
 });
 
 const YardForm = () => {
