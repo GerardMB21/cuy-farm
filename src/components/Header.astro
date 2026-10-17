@@ -1,11 +1,12 @@
 ---
 import { Button } from "./ui/button";
+import YardForm from "./YardForm";
 ---
 
 <header class="sticky top-0 w-full flex flex-col md:flex-row items-start md:items-center justify-between p-2 mb-2">
   <h1 class="w-full text-2xl mb-2">Cuy Metricas</h1>
   <div class="w-full grid grid-cols-2 md:flex md:items-center md:justify-end gap-2">
     <Button variant='outline' className='capitalize'>registrar movimiento</Button>
-    <Button className='capitalize' command="show-modal" commandfor="yard-dialog">nuevo corral</Button>
+    <YardForm client:load/>
   </div>
 </header>

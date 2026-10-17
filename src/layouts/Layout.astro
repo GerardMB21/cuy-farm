@@ -2,7 +2,7 @@
 import "@styles/global.css";
 
 import Header from "@components/Header.astro"; 
-import YardDialog from "@/components/YardDialog.astro";
+import { Toaster } from "@/components/ui/toast";
 ---
 
 <!DOCTYPE html>
@@ -18,6 +18,6 @@ import YardDialog from "@/components/YardDialog.astro";
     <main>
       <slot />
     </main>
-    <YardDialog />
+    <Toaster client:load />
   </body>
 </html>

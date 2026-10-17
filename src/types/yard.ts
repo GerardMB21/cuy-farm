@@ -1,7 +1,7 @@
 export type Yard = {
   name: string
-  initialMale?: number | null
-  initialFemale?: number | null
+  initialMales?: number | null
+  initialFemales?: number | null
   initialBabies?: number | null
 }
 
