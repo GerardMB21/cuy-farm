@@ -1,8 +1,8 @@
 export enum TypeMovement {
   add = 'add',
   transfer = 'transfer',
-  takeAway = 'takeAway',
-  sold = 'sold'
+  sold = 'sold',
+  dead = 'dead'
 }
 
 export enum TypeGender {
