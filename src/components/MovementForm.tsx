@@ -9,14 +9,13 @@ import { InputGroup } from './ui/input-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { TypeGender, TypeMovement, type Movement } from '@/types/movement';
+import type { Yard } from '@/types/yard';
 import { useState } from 'react';
 import { cn } from 'cn';
 import { toast } from './ui/toast';
 
-type YardOption = {
-  id: string
-  name: string
-}
+// Solo se pueden listar corrales ya creados, por eso el id es requerido aquí
+type YardOption = Pick<Yard, 'name'> & { id: string }
 
 type Props = {
   yards?: YardOption[]
@@ -32,7 +31,7 @@ const movementTypes = [
 const genders = [
   { value: TypeGender.male, label: 'Machos' },
   { value: TypeGender.female, label: 'Hembras' },
-  { value: TypeGender.notDefined, label: 'Sin definir' },
+  { value: TypeGender.notDefined, label: 'Crías' },
 ];
 
 // Hasta 2 decimales, el precio se guarda en centavos
