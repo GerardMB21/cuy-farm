@@ -1,0 +1,20 @@
+---
+import type { LucideIcon } from "lucide-react"
+
+type Props = {
+  title: string
+  icon: LucideIcon
+  description?: string
+}
+
+const { title, icon: Icon, description } = Astro.props
+---
+
+<article class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm">
+  <header class="flex items-center justify-between text-sm text-muted-foreground">
+    <span>{title}</span>
+    <Icon size={18} />
+  </header>
+  <slot />
+  {description && <p class="text-xs text-muted-foreground">{description}</p>}
+</article>
