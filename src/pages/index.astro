@@ -1,8 +1,59 @@
 ---
 import Layout from "@layouts/Layout.astro"
+import { Users, Banknote, HeartPulse } from "lucide-react"
 
+const stats = {
+  totalPopulation: 248,
+  salesRevenue: 3640,
+  births: 57,
+  deaths: 14,
+}
+
+const money = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" })
+const number = new Intl.NumberFormat("es-PE")
+
+const totalEvents = stats.births + stats.deaths
+const birthsPct = Math.round((stats.births / totalEvents) * 100)
+const deathsPct = 100 - birthsPct
 ---
 
 <Layout>
-  <h1>main</h1>
+  <section class="grid grid-cols-1 gap-4 p-2 md:grid-cols-3">
+    <article class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm">
+      <header class="flex items-center justify-between text-sm text-muted-foreground">
+        <span>Población total</span>
+        <Users size={18} />
+      </header>
+      <p class="text-3xl font-semibold">{number.format(stats.totalPopulation)}</p>
+      <p class="text-xs text-muted-foreground">Cuyes en todos los corrales</p>
+    </article>
+
+    <article class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm">
+      <header class="flex items-center justify-between text-sm text-muted-foreground">
+        <span>Ingresos por ventas</span>
+        <Banknote size={18} />
+      </header>
+      <p class="text-3xl font-semibold">{money.format(stats.salesRevenue)}</p>
+      <p class="text-xs text-muted-foreground">Total acumulado de ventas</p>
+    </article>
+
+    <article class="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm">
+      <header class="flex items-center justify-between text-sm text-muted-foreground">
+        <span>Nacimientos vs muertes</span>
+        <HeartPulse size={18} />
+      </header>
+      <div class="flex items-baseline justify-between">
+        <p class="text-3xl font-semibold text-emerald-600">{birthsPct}%</p>
+        <p class="text-xl font-semibold text-red-600">{deathsPct}%</p>
+      </div>
+      <div class="flex h-2 w-full overflow-hidden rounded-full bg-muted">
+        <div class="bg-emerald-500" style={`width: ${birthsPct}%`}></div>
+        <div class="bg-red-500" style={`width: ${deathsPct}%`}></div>
+      </div>
+      <div class="flex justify-between text-xs text-muted-foreground">
+        <span>{stats.births} nacimientos (sin definir)</span>
+        <span>{stats.deaths} muertes</span>
+      </div>
+    </article>
+  </section>
 </Layout>
