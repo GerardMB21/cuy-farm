@@ -1,0 +1,66 @@
+---
+import { Mars, Venus, Baby, Skull, Sprout, ArrowLeftRight } from "lucide-react"
+
+type Props = {
+  name: string
+  males: number
+  females: number
+  notDefined: number
+  deaths: number
+  births: number
+  transfers: number
+}
+
+const { name, males, females, notDefined, deaths, births, transfers } = Astro.props
+
+const total = males + females + notDefined
+
+const genders = [
+  { label: "Machos", value: males, icon: Mars },
+  { label: "Hembras", value: females, icon: Venus },
+  { label: "Sin definir", value: notDefined, icon: Baby },
+]
+
+const movements = [
+  { label: "Bajas", value: deaths, icon: Skull, color: "text-red-600" },
+  { label: "Nacimientos", value: births, icon: Sprout, color: "text-emerald-600" },
+  { label: "Transferencias", value: transfers, icon: ArrowLeftRight, color: "text-sky-600" },
+]
+---
+
+<article class="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm">
+  <header class="flex items-baseline justify-between">
+    <h3 class="text-lg font-semibold">{name}</h3>
+    <p class="text-sm text-muted-foreground">
+      Total: <span class="text-2xl font-semibold text-foreground">{total}</span>
+    </p>
+  </header>
+
+  <ul class="grid grid-cols-3 gap-2">
+    {
+      genders.map(({ label, value, icon: Icon }) => (
+        <li class="flex flex-col gap-1 rounded-lg bg-muted p-2">
+          <span class="flex items-center gap-1 text-xs text-muted-foreground">
+            <Icon size={14} />
+            {label}
+          </span>
+          <span class="text-lg font-semibold">{value}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <ul class="grid grid-cols-3 gap-2 border-t pt-3">
+    {
+      movements.map(({ label, value, icon: Icon, color }) => (
+        <li class="flex flex-col gap-1">
+          <span class="flex items-center gap-1 text-xs text-muted-foreground">
+            <Icon size={14} class={color} />
+            {label}
+          </span>
+          <span class={`text-lg font-semibold ${color}`}>{value}</span>
+        </li>
+      ))
+    }
+  </ul>
+</article>

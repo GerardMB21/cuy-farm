@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro"
+import YardCard from "@components/YardCard.astro"
 import { Users, Banknote, HeartPulse } from "lucide-react"
 
 const stats = {
@@ -9,7 +10,13 @@ const stats = {
   deaths: 14,
 }
 
-const money = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" })
+const yards = [
+  { id: "1", name: "Corral 1", males: 40, females: 62, notDefined: 18, deaths: 3, births: 25, transfers: 6 },
+  { id: "2", name: "Corral 2", males: 35, females: 55, notDefined: 21, deaths: 5, births: 20, transfers: 2 },
+  { id: "3", name: "Corral 3", males: 12, females: 5, notDefined: 0, deaths: 6, births: 12, transfers: 8 },
+]
+
+const money =new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" })
 const number = new Intl.NumberFormat("es-PE")
 
 const totalEvents = stats.births + stats.deaths
@@ -55,5 +62,10 @@ const deathsPct = 100 - birthsPct
         <span>{stats.deaths} muertes</span>
       </div>
     </article>
+  </section>
+
+  <section class="flex flex-col gap-4 p-2">
+    <h2 class="text-xl font-semibold">Corrales</h2>
+    {yards.map(({ id, ...yard }) => <YardCard {...yard} />)}
   </section>
 </Layout>
