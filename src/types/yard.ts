@@ -7,4 +7,6 @@ export type Yard = {
   totalMales?: number | null
   totalFemales?: number | null
   totalBabies?: number | null
+  // Calculado por el backend, no se envía al crear o actualizar
+  total?: number | null
 }
