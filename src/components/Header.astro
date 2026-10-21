@@ -1,18 +1,12 @@
 ---
 import MovementForm from "./MovementForm";
 import YardForm from "./YardForm";
-
-// TODO: reemplazar por los corrales reales cuando exista la fuente de datos
-const yards = [
-  { id: "1", name: "Corral 1" },
-  { id: "2", name: "Corral 2" },
-];
 ---
 
 <header class="sticky top-0 w-full flex flex-col md:flex-row items-start md:items-center justify-between p-2 mb-2 bg-white shadow-lg">
   <h1 class="w-full text-2xl mb-2">Cuy Metricas</h1>
   <div class="w-full grid grid-cols-2 md:flex md:items-center md:justify-end gap-2">
-    <MovementForm client:load yards={yards}/>
+    <MovementForm client:load/>
     <YardForm client:load/>
   </div>
 </header>

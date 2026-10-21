@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from './ui/field';
 import { Input } from './ui/input';
 import type { Yard } from '@/types/yard';
+import { createYard } from '@/routes/yards';
 import { InputGroup } from './ui/input-group';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useState } from 'react';
@@ -38,9 +39,15 @@ const YardForm = () => {
   function closeDialog() {
     setIsOpenDialog(false)
   }
-  function onSubmit(values: Yard) {
+  async function onSubmit(values: Yard) {
     try {
-      console.log('values: ', values);
+      await createYard({
+        name: values.name,
+        initialMales: values.initialMales,
+        initialFemales: values.initialFemales,
+        initialBabies: values.initialBabies,
+      });
+      window.dispatchEvent(new CustomEvent('cuy:data-changed'));
       toast.add({
         type: "success",
         description: "El corral ha sido guardado.",

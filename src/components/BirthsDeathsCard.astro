@@ -2,28 +2,20 @@
 import { HeartPulse } from "lucide-react"
 import StatCard from "./StatCard.astro"
 
-type Props = {
-  births: number
-  deaths: number
-}
-
-const { births, deaths } = Astro.props
-
-const birthsPct = Math.round((births / (births + deaths)) * 100)
-const deathsPct = 100 - birthsPct
+// Los valores se llenan en el cliente, ver el script de index.astro
 ---
 
 <StatCard title="Nacimientos vs muertes" icon={HeartPulse}>
   <div class="flex items-baseline justify-between">
-    <p class="text-3xl font-semibold text-emerald-600">{birthsPct}%</p>
-    <p class="text-xl font-semibold text-red-600">{deathsPct}%</p>
+    <p class="text-3xl font-semibold text-emerald-600" data-field="birthsPct">—</p>
+    <p class="text-xl font-semibold text-red-600" data-field="deathsPct">—</p>
   </div>
   <div class="flex h-2 w-full overflow-hidden rounded-full bg-muted">
-    <div class="bg-emerald-500" style={`width: ${birthsPct}%`}></div>
-    <div class="bg-red-500" style={`width: ${deathsPct}%`}></div>
+    <div class="bg-emerald-500" style="width: 0%" data-bar="births"></div>
+    <div class="bg-red-500" style="width: 0%" data-bar="deaths"></div>
   </div>
   <div class="flex justify-between text-xs text-muted-foreground">
-    <span>{births} nacimientos (sin definir)</span>
-    <span>{deaths} muertes</span>
+    <span><span data-field="births">—</span> nacimientos (sin definir)</span>
+    <span><span data-field="deaths">—</span> muertes</span>
   </div>
 </StatCard>
