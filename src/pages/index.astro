@@ -4,37 +4,100 @@ import YardCard from "@components/YardCard.astro"
 import StatCard from "@components/StatCard.astro"
 import BirthsDeathsCard from "@components/BirthsDeathsCard.astro"
 import { Users, Banknote } from "lucide-react"
-
-const stats = {
-  totalPopulation: 248,
-  salesRevenue: 3640,
-  births: 57,
-  deaths: 14,
-}
-
-const yards = [
-  { id: "1", name: "Corral 1", males: 40, females: 62, notDefined: 18, deaths: 3, births: 25, transfers: 6 },
-  { id: "2", name: "Corral 2", males: 35, females: 55, notDefined: 21, deaths: 5, births: 20, transfers: 2 },
-  { id: "3", name: "Corral 3", males: 12, females: 5, notDefined: 0, deaths: 6, births: 12, transfers: 8 },
-]
-
-const money = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" })
-const number = new Intl.NumberFormat("es-PE")
 ---
 
 <Layout>
-  <section class="grid grid-cols-1 gap-4 p-2 md:grid-cols-3">
+  <section class="grid grid-cols-1 gap-4 p-2 md:grid-cols-3" id="stats">
     <StatCard title="Población total" icon={Users} description="Cuyes en todos los corrales">
-      <p class="text-3xl font-semibold">{number.format(stats.totalPopulation)}</p>
+      <p class="text-3xl font-semibold" data-field="totalPopulation">—</p>
     </StatCard>
     <StatCard title="Ingresos por ventas" icon={Banknote} description="Total acumulado de ventas">
-      <p class="text-3xl font-semibold">{money.format(stats.salesRevenue)}</p>
+      <p class="text-3xl font-semibold" data-field="salesRevenue">—</p>
     </StatCard>
-    <BirthsDeathsCard births={stats.births} deaths={stats.deaths} />
+    <BirthsDeathsCard />
   </section>
 
   <section class="flex flex-col gap-4 p-2">
     <h2 class="text-xl font-semibold">Corrales</h2>
-    {yards.map(({ id, ...yard }) => <YardCard {...yard} />)}
+    <p class="text-sm text-muted-foreground" id="yards-status">Cargando corrales...</p>
+    <div class="flex flex-col gap-4" id="yards"></div>
+    <template id="yard-card"><YardCard /></template>
   </section>
 </Layout>
+
+<script>
+  import { getMovements } from "@/routes/movements"
+  import { getYards } from "@/routes/yards"
+  import { summarize } from "@/lib/dashboard"
+  import { toast } from "@/components/ui/toast"
+
+  // El sitio es estático, los datos se piden al backend desde el navegador
+  const money = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" })
+  const number = new Intl.NumberFormat("es-PE")
+
+  const stats = document.getElementById("stats")!
+  const yardsContainer = document.getElementById("yards")!
+  const yardsStatus = document.getElementById("yards-status")!
+  const yardTemplate = document.getElementById("yard-card") as HTMLTemplateElement
+
+  function fill(root: ParentNode, values: Record<string, string>) {
+    root.querySelectorAll<HTMLElement>("[data-field]").forEach((el) => {
+      const value = values[el.dataset.field!]
+      if (value !== undefined) el.textContent = value
+    })
+  }
+
+  async function loadDashboard() {
+    try {
+      const [yards, movements] = await Promise.all([getYards(), getMovements()])
+      const summary = summarize(yards, movements)
+
+      const outcomes = summary.births + summary.deaths
+      const birthsPct = outcomes ? Math.round((summary.births / outcomes) * 100) : 0
+      const deathsPct = outcomes ? 100 - birthsPct : 0
+
+      fill(stats, {
+        totalPopulation: number.format(summary.totalPopulation),
+        salesRevenue: money.format(summary.salesRevenue),
+        births: number.format(summary.births),
+        deaths: number.format(summary.deaths),
+        birthsPct: `${birthsPct}%`,
+        deathsPct: `${deathsPct}%`,
+      })
+      stats.querySelector<HTMLElement>('[data-bar="births"]')!.style.width = `${birthsPct}%`
+      stats.querySelector<HTMLElement>('[data-bar="deaths"]')!.style.width = `${deathsPct}%`
+
+      yardsContainer.replaceChildren(
+        ...summary.yards.map((yard) => {
+          const card = yardTemplate.content.cloneNode(true) as DocumentFragment
+          fill(card, {
+            name: yard.name,
+            total: number.format(yard.total),
+            males: number.format(yard.males),
+            females: number.format(yard.females),
+            notDefined: number.format(yard.notDefined),
+            deaths: number.format(yard.deaths),
+            births: number.format(yard.births),
+            income: money.format(yard.income),
+          })
+          return card
+        }),
+      )
+      yardsStatus.textContent = summary.yards.length ? "" : "Aún no hay corrales registrados."
+      yardsStatus.hidden = summary.yards.length > 0
+    } catch (error) {
+      console.error("error: ", error)
+      yardsStatus.hidden = false
+      yardsStatus.textContent = "No se pudo cargar la información."
+      toast.add({
+        type: "error",
+        description: "No se pudo cargar la información del dashboard.",
+        priority: "high",
+      })
+    }
+  }
+
+  loadDashboard()
+  // Los formularios avisan cuando registran un corral o movimiento
+  window.addEventListener("cuy:data-changed", loadDashboard)
+</script>
