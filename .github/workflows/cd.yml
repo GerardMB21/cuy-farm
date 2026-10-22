@@ -1,0 +1,66 @@
+name: CD
+on:
+  push:
+    branches: [dev, main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+    env:
+      PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync assets with long cache
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME }} \
+              --delete \
+              --cache-control "public,max-age=31536000,immutable" \
+              --exclude "*.html"
+
+      - name: Sync HTML without cache
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME }} \
+              --delete \
+              --cache-control "public,max-age=0,must-revalidate" \
+              --exclude "*" --include "*.html"
+
+      - name: Invalid Cloudfront
+        run: |
+          aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
+
