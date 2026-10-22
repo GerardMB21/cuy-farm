@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.base_ref == 'main' && 'production' || 'development' }}
     env:
-      PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+      PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
